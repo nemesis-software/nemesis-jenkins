@@ -3,87 +3,108 @@
 pipeline {
     agent any
     parameters {
+        password(
+                name: "NEMESIS_DOCS_SSH_NEMESIS_PASSWORD",
+                defaultValue: "AxugXiP0iJ3akteYzDbFZ6so2lGe4B",
+                description: "The key to upload nemesis documentation.",
+        )
+        password(
+                name: "NEMESIS_REPOSITORY_HTTP_PASSWORD",
+                defaultValue: "8Rw1e0eLcCyrBwAh3ZsiILzWBCOWtyC8",
+                description: "The key to access nemesis maven artifactory repository."
+        )
+        password(
+                name: "NEMESIS_JENKINS_GITHUB_PASSWORD",
+                defaultValue: "YmUxZTdlNjc0YzY4YjRlZDlmNTQ4ZGE4",
+                description: "The key to access nemesis github repository."
+        )
+        string(
+                name: "mvn",
+                defaultValue: "/opt/bitnami/apache-maven-3.5.0/bin/mvn",
+                description: "Path to maven executable."
+        )
+        string(
+                name: "MAVEN_OPTS",
+                defaultValue: "-Xms2G -Xmx3G -Xss128M -XX:+CMSClassUnloadingEnabled",
+                description: "The maven opts environment variable."
+        )
         string(
                 name: "releaseVersion",
-                defaultValue: "",
+                defaultValue: "2.0.1.RELEASE",
                 description: "Specify the release version")
         string(
                 name: "developmentVersion",
-                defaultValue: "",
+                defaultValue: "2.0.2.BUILD-SNAPSHOT",
                 description: "Specify the next development version after this release.")
         booleanParam(
                 name: "dryRun",
-                defaultValue: false,
+                defaultValue: true,
                 description: "")
     }
-
     stages {
         stage('Release BOM') {
-            release(
-                    job: "nemesis-bom-master",
-                    parameters {
-                        string(
-                                name: "releaseVersion",
-                                value: "${params.releaseVersion}")
-                        string(
-                                name: "developmentVersion",
-                                value: "${params.developmentVersion}")
-                        booleanParam(
-                                name: "dryRun",
-                                value: "${params.dryRun}")
-                    }
-            )
+            steps {
+                release job: 'nemesis-bom-master',
+                        parameters: [
+                                password(name: 'NEMESIS_DOCS_SSH_NEMESIS_PASSWORD', value: NEMESIS_DOCS_SSH_NEMESIS_PASSWORD),
+                                password(name: 'NEMESIS_REPOSITORY_HTTP_PASSWORD', value: NEMESIS_REPOSITORY_HTTP_PASSWORD),
+                                password(name: 'NEMESIS_JENKINS_GITHUB_PASSWORD', value: NEMESIS_JENKINS_GITHUB_PASSWORD),
+                                string(name: 'mvn', value: mvn),
+                                string(name: 'MAVEN_OPTS', value: MAVEN_OPTS),
+                                string(name: 'releaseVersion', value: releaseVersion),
+                                string(name: 'developmentVersion', value: developmentVersion),
+                                booleanParam(name: 'dryRun', value: Boolean.valueOf(dryRun))
+                        ]
+            }
         }
 
         stage('Release Platform') {
-            release(
-                    job: "nemesis-bom-master",
-                    parameters {
-                        string(
-                                name: "releaseVersion",
-                                value: "${params.releaseVersion}")
-                        string(
-                                name: "developmentVersion",
-                                value: "${params.developmentVersion}")
-                        booleanParam(
-                                name: "dryRun",
-                                value: "${params.dryRun}")
-                    }
-            )
+
+            steps {
+                release job: 'nemesis-platform-master',
+                        parameters: [
+                                password(name: 'NEMESIS_DOCS_SSH_NEMESIS_PASSWORD', value: NEMESIS_DOCS_SSH_NEMESIS_PASSWORD),
+                                password(name: 'NEMESIS_REPOSITORY_HTTP_PASSWORD', value: NEMESIS_REPOSITORY_HTTP_PASSWORD),
+                                password(name: 'NEMESIS_JENKINS_GITHUB_PASSWORD', value: NEMESIS_JENKINS_GITHUB_PASSWORD),
+                                string(name: 'mvn', value: mvn),
+                                string(name: 'MAVEN_OPTS', value: MAVEN_OPTS),
+                                string(name: 'releaseVersion', value: releaseVersion),
+                                string(name: 'developmentVersion', value: developmentVersion),
+                                booleanParam(name: 'dryRun', value: Boolean.valueOf(dryRun))
+                        ]
+            }
         }
 
         stage('Release Archetype') {
-            release(
-                    job: "nemesis-bom-master",
-                    parameters {
-                        string(
-                                name: "releaseVersion",
-                                value: "${params.releaseVersion}")
-                        string(
-                                name: "developmentVersion",
-                                value: "${params.developmentVersion}")
-                        booleanParam(
-                                name: "dryRun",
-                                value: "${params.dryRun}")
-                    }
-            )
+            steps {
+                release job: 'nemesis-archetype-master',
+                        parameters: [
+                                password(name: 'NEMESIS_DOCS_SSH_NEMESIS_PASSWORD', value: NEMESIS_DOCS_SSH_NEMESIS_PASSWORD),
+                                password(name: 'NEMESIS_REPOSITORY_HTTP_PASSWORD', value: NEMESIS_REPOSITORY_HTTP_PASSWORD),
+                                password(name: 'NEMESIS_JENKINS_GITHUB_PASSWORD', value: NEMESIS_JENKINS_GITHUB_PASSWORD),
+                                string(name: 'mvn', value: mvn),
+                                string(name: 'MAVEN_OPTS', value: MAVEN_OPTS),
+                                string(name: 'releaseVersion', value: releaseVersion),
+                                string(name: 'developmentVersion', value: developmentVersion),
+                                booleanParam(name: 'dryRun', value: Boolean.valueOf(dryRun))
+                        ]
+            }
         }
 
         stage('Release Console') {
-            release(
-                    job: "nemesis-bom-master",
-                    parameters {
-                        string(
-                                name: "releaseVersion",
-                                value: "${params.releaseVersion}")
-                        string(
-                                name: "developmentVersion",
-                                value: "${params.developmentVersion}")
-                        booleanParam(
-                                name: "dryRun",
-                                value: "${params.dryRun}")
-                    }
-            )
+            steps {
+                release job: 'nemesis-console-master',
+                        parameters: [
+                                password(name: 'NEMESIS_DOCS_SSH_NEMESIS_PASSWORD', value: NEMESIS_DOCS_SSH_NEMESIS_PASSWORD),
+                                password(name: 'NEMESIS_REPOSITORY_HTTP_PASSWORD', value: NEMESIS_REPOSITORY_HTTP_PASSWORD),
+                                password(name: 'NEMESIS_JENKINS_GITHUB_PASSWORD', value: NEMESIS_JENKINS_GITHUB_PASSWORD),
+                                string(name: 'mvn', value: mvn),
+                                string(name: 'MAVEN_OPTS', value: MAVEN_OPTS),
+                                string(name: 'releaseVersion', value: releaseVersion),
+                                string(name: 'developmentVersion', value: developmentVersion),
+                                booleanParam(name: 'dryRun', value: Boolean.valueOf(dryRun))
+                        ]
+            }
         }
 
     }
